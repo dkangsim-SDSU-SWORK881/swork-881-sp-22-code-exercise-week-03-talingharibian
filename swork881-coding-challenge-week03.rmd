@@ -1,7 +1,7 @@
 ---
 title: "week 03 coding challenge"
-author: "."
-date: ""
+author: "Talin Gharibian"
+date: "02/08/2022"
 output: html_document
 ---
 
@@ -11,11 +11,13 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 
 
 ```{r load libraries}
-
+library(tidyverse)
+library(tidymodels)
 ```
 
 
 ```{r load data}
+data.01 <- read_csv("Data/LHS_exercise_02042022.csv")
 
 ```
 
@@ -40,7 +42,12 @@ How often did you have a drink containing alcohol in the past year?
 5. Never <- coded as '0'
 
 ```{r data wrangling}
-
+data.02 <- data.01%>%
+  mutate(ptsd_mean = (ptsd1_1 + ptsd2_1 + ptsd3_1 + ptsd4_1)/4,
+         ptsd_mean_rev = 6 - ptsd_mean,
+         ptsd_mean_rev_std = scale(ptsd_mean_rev),
+         audit_c = case_when(audit1 < 3 ~ 1,
+                             audit1 > 2 ~ 0))
 ```
 
 
