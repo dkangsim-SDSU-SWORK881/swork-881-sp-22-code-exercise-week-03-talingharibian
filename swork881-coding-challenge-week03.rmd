@@ -51,32 +51,50 @@ data.02 <- data.01%>%
 ```
 
 
+
 #Now we will be running several logistic regression and compare the results:
 
 Run logistic regression using `ptsd_mean_rev` adjusting for age, sex, and education; use `tidy` function for output; exponent your results and interpret your result using odds ratio
 ```{r logistic regression 1}
-
+fit.1 <- glm(audit_c ~ ptsd_mean_rev + age + factor(education) + factor(sex),
+             family = binomial(link = "logit"),
+             data = data.02)
+summary(fit.1)
+tidy(fit.1, conf.int = T, exponentiate =T)
 ```
 
 Interpretation: 
-[ ]
+[After controlling for education, age and sex, we find that depression risk (ptsd_mean_rev) is positively associated with alcohol consumption (audit_c), with an odds ratio of 1.36 and p<0.001.]
 
 Use `ggfortify`'s `autoplot` function to do model diagnostics
 ```{r}
-
+#install.packages('ggfortify')
+library('ggfortify')
+autoplot(fit.1)
 ```
 
 Explain diagnostic plots:
-[ ]
+[ The residuals deviate from the typical regression assumptions.]
 
 
 
 Run logistic regression using `ptsd_mean_rev_std` adjusting for age, sex, and education; use `tidy` function for output; use `divide-by-four` approach and interpret your result using probability scale. 
 ```{r}
-
+fit.2 <- glm(audit_c ~ ptsd_mean_rev_std + age + factor(education) + factor(sex),
+             family = binomial(link = "logit"),
+             data = data.02)
+summary(fit.2)
+tidy(fit.2, conf.int = T, exponentiate =T)
 ```
+```{r}
+#without exponentiate option:
+data.03 <- tidy(fit.2, conf.int = T)
+data.03$divdideby4 <- (data.03$estimate/4)*100
+data.03
+```
+
 Interpretation
-[ ]
+[ Using the standardized variable, we see that the ptsd_mean_rev_std and audit_c score are positively associated with an odds ratio of 1.39, p<0.001. Using the 'divide by 4 rule,' we find that increasing the ptsd_mean_rev_std score by one unit will increase the chance of the audit_c=1 score about 8.4%.]
 
 
 
@@ -92,6 +110,10 @@ if ptsd_mean_rev is :
 Refer to Healy's book or Google search as a guide. 
 
 ```{r visualization}
-
+data.04 <- data.02%>%
+  mutate(ptsd_mean_rev_cat = case_when(ptsd_mean_rev >= 4 ~ 4,
+                             ptsd_mean_rev >= 3 ~ 3,
+                             ptsd_mean_rev >= 2 ~ 2,
+                             ptsd_mean_rev >= 1 ~ 1))
 ```
 
